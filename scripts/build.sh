@@ -57,12 +57,20 @@ done
 
 # 检查必要的库
 REQUIRED_LIBS=("alsa" "openssl" "json-c" "opus" "opusenc" "opusfile")
+MISSING_LIBS=()
 for lib in "${REQUIRED_LIBS[@]}"; do
     if ! pkg-config --exists "$lib"; then
-        echo "错误: 未找到库 $lib"
-        exit 1
+        MISSING_LIBS+=("$lib")
     fi
 done
+
+if [ ${#MISSING_LIBS[@]} -ne 0 ]; then
+    echo "错误: 未找到以下库: ${MISSING_LIBS[*]}"
+    echo "请安装缺失的依赖包:"
+    echo "Ubuntu/Debian: sudo apt update && sudo apt install build-essential alsa-utils libasound2-dev libssl-dev libjson-c-dev libopus-dev libopusenc-dev libopusfile-dev cmake pkg-config"
+    echo "CentOS/RHEL/Fedora: sudo yum install gcc gcc-c++ make alsa-lib-devel openssl-devel json-c-devel opus-devel opus-tools"
+    exit 1
+fi
 
 echo "所有依赖检查通过"
 echo

@@ -1,0 +1,22 @@
+{
+  "server": {
+    "websocket_url": "ws://localhost:8080/ws",
+    "mqtt_broker": "mqtt://localhost:1883",
+    "auth_token": "test_token"
+  },
+  "audio": {
+    "input_device": "default",
+    "output_device": "default",
+    "sample_rate": 16000,
+    "channels": 1,
+    "opus_bitrate": 32000
+  },
+  "mcp": {
+    "enabled": true,
+    "port": 8081
+  },
+  "network": {
+    "reconnect_interval": 2,
+    "timeout": 10
+  }
+}

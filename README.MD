@@ -93,7 +93,7 @@ cd xiaozhi-linux-cc
 # Ubuntu/Debian
 sudo apt update
 sudo apt install build-essential alsa-utils libasound2-dev libssl-dev \
-               libjson-c-dev libopus-dev libopusenc-dev libopusfile-dev \
+               libjson-c-dev opus-tools libopus-dev libopusenc-dev libopusfile-dev  \
                cmake pkg-config
 
 # CentOS/RHEL/Fedora
@@ -103,6 +103,10 @@ sudo yum install gcc gcc-c++ make alsa-lib-devel openssl-devel \
 
 ### 3. 构建项目
 ```bash
+# 使用构建脚本（推荐）
+./scripts/build.sh
+
+# 或者手动构建
 mkdir build && cd build
 cmake ..
 make -j$(nproc)

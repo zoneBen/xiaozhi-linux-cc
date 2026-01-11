@@ -27,3 +27,27 @@ CMakeCache.txt
 cmake_install.cmake
 Makefile
 
+# 更多构建产物
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+.compile_commands.json
+
+# 可执行文件
+xiaozhi-daemon
+xiaozhi-cli
+
+# 日志和临时数据
+logs/
+*.out
+*.err
+.user_config
+
+# 用户目录特定配置
+.config/
+.local/
+.cache/
+
