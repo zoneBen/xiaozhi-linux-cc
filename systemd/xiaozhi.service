@@ -1,0 +1,27 @@
+[Unit]
+Description=小智AI语音聊天机器人服务
+After=network.target sound.target
+Wants=sound.target
+
+[Service]
+Type=simple
+User=%i
+Group=audio
+ExecStart=/usr/local/bin/xiaozhi-daemon --config /home/%i/.config/xiaozhi/config.json
+Restart=always
+RestartSec=5
+Environment=XIAOZHI_LOG_LEVEL=INFO
+
+# 安全性设置
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/tmp /var/tmp /home/%i/.local/share/xiaozhi
+
+# 环境变量
+Environment=HOME=/home/%i
+
+[Install]
+WantedBy=multi-user.target
+Also=xiaozhi-client.service

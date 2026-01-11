@@ -1,0 +1,22 @@
+﻿{
+  "server": {
+    "websocket_url": "wss://api.xiaozhi.example.com/ws",
+    "mqtt_broker": "mqtt://broker.xiaozhi.example.com:1883",
+    "auth_token": "your_auth_token_here"
+  },
+  "audio": {
+    "input_device": "default",
+    "output_device": "default",
+    "sample_rate": 16000,
+    "channels": 1,
+    "opus_bitrate": 32000
+  },
+  "mcp": {
+    "enabled": true,
+    "port": 8080
+  },
+  "network": {
+    "reconnect_interval": 5,
+    "timeout": 30
+  }
+}
