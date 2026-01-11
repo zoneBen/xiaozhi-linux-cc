@@ -96,6 +96,19 @@ sudo apt install build-essential alsa-utils libasound2-dev libssl-dev \
                libjson-c-dev opus-tools libopus-dev libopusenc-dev libopusfile-dev  \
                cmake pkg-config
 
+# 如果遇到 "E: Unable to locate package libopusenc-dev"，请先运行：
+# sudo apt update && sudo apt install libopusenc-dev
+
+# 或者从源码编译安装：
+# sudo apt install build-essential autoconf automake libtool pkg-config libopus-dev
+# git clone https://github.com/xiph/libopusenc.git
+# cd libopusenc
+# ./autogen.sh
+# ./configure
+# make
+# sudo make install
+# sudo ldconfig
+
 # CentOS/RHEL/Fedora
 sudo yum install gcc gcc-c++ make alsa-lib-devel openssl-devel \
                json-c-devel opus-devel opus-tools

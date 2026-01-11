@@ -68,6 +68,12 @@ if [ ${#MISSING_LIBS[@]} -ne 0 ]; then
     echo "错误: 未找到以下库: ${MISSING_LIBS[*]}"
     echo "请安装缺失的依赖包:"
     echo "Ubuntu/Debian: sudo apt update && sudo apt install build-essential alsa-utils libasound2-dev libssl-dev libjson-c-dev libopus-dev libopusenc-dev libopusfile-dev cmake pkg-config"
+    echo "Ubuntu/Debian (alternative for libopusenc-dev): sudo apt install opus-tools libopus-dev libopusenc-dev libopusfile-dev"
+    echo "Ubuntu/Debian (from source):"
+    echo "  1. sudo apt install build-essential autoconf automake libtool pkg-config libopus-dev"
+    echo "  2. git clone https://github.com/xiph/libopusenc.git"
+    echo "  3. cd libopusenc && ./autogen.sh && ./configure && make && sudo make install"
+    echo "  4. sudo ldconfig"
     echo "CentOS/RHEL/Fedora: sudo yum install gcc gcc-c++ make alsa-lib-devel openssl-devel json-c-devel opus-devel opus-tools"
     exit 1
 fi
