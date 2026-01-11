@@ -1,6 +1,8 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <string>
+#include <cstring>
 #include "audio/audio_manager.h"
 #include "network/websocket_client.h"
 #include "mcp/mcp_server.h"
@@ -9,12 +11,30 @@
 #include "utils/logger.h"
 
 int main(int argc, char *argv[]) {
+    std::string config_path = ""; // 默认为空，让ConfigManager使用默认路径
+    
+    // 解析命令行参数
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--config") == 0 && i + 1 < argc) {
+            config_path = argv[++i];
+        } else if (strcmp(argv[i], "-c") == 0 && i + 1 < argc) {
+            config_path = argv[++i];
+        } else if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
+            std::cout << "小智AI - Linux版\n";
+            std::cout << "用法: " << argv[0] << " [选项]\n";
+            std::cout << "选项:\n";
+            std::cout << "  --config, -c <路径>  指定配置文件路径\n";
+            std::cout << "  --help, -h          显示此帮助信息\n";
+            return 0;
+        }
+    }
+    
     // 初始化日志系统
     xiaozhi::Logger::getInstance().info("小智AI - Linux版启动中...");
     
     // 加载配置
     auto& configMgr = xiaozhi::ConfigManager::getInstance();
-    configMgr.loadConfig();
+    configMgr.loadConfig(config_path);  // 使用命令行参数指定的配置文件路径
     
     auto serverConfig = configMgr.getServerConfig();
     auto audioConfig = configMgr.getAudioConfig();

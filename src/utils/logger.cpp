@@ -1,8 +1,11 @@
 #include "logger.h"
+#include "utils.h"
 #include <iomanip>
 #include <sstream>
 #include <cstdarg>
 #include <cstdlib>
+#include <pwd.h>
+#include <unistd.h>
 
 namespace xiaozhi {
 
@@ -49,13 +52,16 @@ void Logger::setLogFile(const std::string& filepath) {
         log_file_.close();
     }
     
+    // 扩展波浪号路径
+    std::string expanded_filepath = expandHomeDirectory(filepath);
+    
     // 创建目录（如果不存在）
-    std::string dir_path = filepath.substr(0, filepath.find_last_of('/'));
+    std::string dir_path = expanded_filepath.substr(0, expanded_filepath.find_last_of('/'));
     (void)system(("mkdir -p " + dir_path).c_str()); // 忽略返回值以避免警告
     
-    log_file_.open(filepath, std::ios::app);
+    log_file_.open(expanded_filepath, std::ios::app);
     if (!log_file_.is_open()) {
-        std::cerr << "无法打开日志文件: " << filepath << std::endl;
+        std::cerr << "无法打开日志文件: " << expanded_filepath << std::endl;
     }
 }
 

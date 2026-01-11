@@ -1,0 +1,37 @@
+{
+  "server": {
+    "host": "localhost",
+    "port": 8080,
+    "ssl_enabled": false
+  },
+  "audio": {
+    "input_device": "hw:0,0",
+    "output_device": "hw:0,0",
+    "sample_rate": 16000,
+    "channels": 1,
+    "format": "S16_LE"
+  },
+  "opus": {
+    "bitrate": 32000,
+    "complexity": 10,
+    "signal_type": "auto"
+  },
+  "websocket": {
+    "url": "ws://localhost:8080/ws",
+    "reconnect_interval": 5000,
+    "timeout": 30000
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "~/.local/share/xiaozhi/logs/xiaozhi.log"
+  },
+  "mcp": {
+    "enabled": true,
+    "port": 8081
+  },
+  "ai": {
+    "api_key": "",
+    "model": "gpt-4o-mini",
+    "base_url": "https://api.openai.com/v1"
+  }
+}

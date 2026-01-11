@@ -80,6 +80,33 @@ arecord -D default -f cd -d 5 test.wav
 aplay test.wav
 ```
 
+#### Rockchip设备音频配置
+
+对于Rockchip设备（如ES8388音频芯片），需要使用特定的硬件设备名称：
+
+```bash
+# 您的系统音频设备列表
+**** List of CAPTURE Hardware Devices ****
+card 0: rockchipes8388 [rockchip-es8388], device 0: dailink-multicodecs ES8323 HiFi-0 [dailink-multicodecs ES8323 HiFi-0]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+
+card 2: rockchiphdmi [rockchip-hdmi], device 0: rockchip-hdmi i2s-hifi-0 [rockchip-hdmi i2s-hifi-0]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+
+# 推荐配置
+{
+  "audio": {
+    "input_device": "hw:0,0",  # 录音设备，对应card 0
+    "output_device": "hw:0,0",  # 播放设备，对应card 0
+    "sample_rate": 16000,
+    "channels": 1,
+    "format": "S16_LE"
+  }
+}
+```
+
 ### 网络测试
 
 ```bash

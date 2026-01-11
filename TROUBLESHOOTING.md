@@ -177,7 +177,47 @@ EOF
    aplay -l
    ```
 
-### 3. CMake配置问题
+### 3. 音频设备配置问题
+
+#### 问题：使用默认设备名无法录音或播放
+
+**解决方案**:
+
+1. **检查系统上的硬件设备**:
+   ```bash
+   arecord -l  # 列出录音设备
+   aplay -l    # 列出播放设备
+   
+   # 示例输出（如Rockchip设备）：
+   **** List of CAPTURE Hardware Devices ****
+   card 0: rockchipes8388 [rockchip-es8388], device 0: dailink-multicodecs ES8323 HiFi-0 [dailink-multicodecs ES8323 HiFi-0]
+     Subdevices: 1/1
+     Subdevice #0: subdevice #0
+   
+   card 2: rockchiphdmi [rockchip-hdmi], device 0: rockchip-hdmi i2s-hifi-0 [rockchip-hdmi i2s-hifi-0]
+     Subdevices: 1/1
+     Subdevice #0: subdevice #0
+   ```
+
+2. **使用具体的硬件设备名称**:
+   ```bash
+   # 配置文件示例
+   {
+     "audio": {
+       "input_device": "hw:0,0",  # 对应card 0
+       "output_device": "hw:0,0",  # 对应card 0
+       "sample_rate": 16000,
+       "channels": 1,
+       "format": "S16_LE"
+     }
+   }
+   
+   # 测试硬件设备是否正常工作
+   arecord -D hw:0,0 -f S16_LE -r 16000 -c 1 -d 3 test_record.wav
+   aplay -D hw:0,0 test_record.wav
+   ```
+
+### 4. CMake配置问题
 
 #### 问题：找不到依赖库路径
 

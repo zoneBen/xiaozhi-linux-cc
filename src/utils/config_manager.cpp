@@ -1,7 +1,11 @@
 #include "config_manager.h"
+#include "utils.h"
 #include <iostream>
 #include <fstream>
 #include <json-c/json.h>
+#include <cstdlib>
+#include <pwd.h>
+#include <unistd.h>
 
 namespace xiaozhi {
 
@@ -15,6 +19,9 @@ bool ConfigManager::loadConfig(const std::string& filepath) {
     if (path.empty()) {
         path = "~/.config/xiaozhi/config.json"; // 默认路径
     }
+    
+    // 扩展波浪号路径
+    path = expandHomeDirectory(path);
 
     std::cout << "[ConfigManager] 加载配置文件: " << path << std::endl;
 
@@ -144,6 +151,9 @@ bool ConfigManager::saveConfig(const std::string& filepath) {
     if (path.empty()) {
         path = "~/.config/xiaozhi/config.json"; // 默认路径
     }
+    
+    // 扩展波浪号路径
+    path = expandHomeDirectory(path);
 
     std::cout << "[ConfigManager] 保存配置文件: " << path << std::endl;
 

@@ -88,6 +88,32 @@ sudo usermod -a -G audio $USER
 # 重新登录以应用更改
 ```
 
+### Rockchip设备特殊配置
+
+对于使用Rockchip音频芯片（如ES8388）的设备，您可能需要：
+
+```bash
+# 检查音频设备
+arecord -l  # 列出录音设备
+aplay -l    # 列出播放设备
+
+# 针对Rockchip设备的典型配置
+{
+  "audio": {
+    "input_device": "hw:0,0",  # 使用硬件设备，而不是默认设备
+    "output_device": "hw:0,0",
+    "sample_rate": 16000,
+    "channels": 1,
+    "format": "S16_LE"
+  }
+}
+
+# 测试音频
+
+speaker-test -c 2 -t wav -D hw:0,0
+
+```
+
 ## 构建项目
 
 ```bash
