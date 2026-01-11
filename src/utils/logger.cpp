@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <sstream>
 #include <cstdarg>
+#include <cstdlib>
 
 namespace xiaozhi {
 
@@ -50,7 +51,7 @@ void Logger::setLogFile(const std::string& filepath) {
     
     // 创建目录（如果不存在）
     std::string dir_path = filepath.substr(0, filepath.find_last_of('/'));
-    system(("mkdir -p " + dir_path).c_str());
+    (void)system(("mkdir -p " + dir_path).c_str()); // 忽略返回值以避免警告
     
     log_file_.open(filepath, std::ios::app);
     if (!log_file_.is_open()) {

@@ -66,16 +66,47 @@ done
 
 if [ ${#MISSING_LIBS[@]} -ne 0 ]; then
     echo "错误: 未找到以下库: ${MISSING_LIBS[*]}"
-    echo "请安装缺失的依赖包:"
-    echo "Ubuntu/Debian: sudo apt update && sudo apt install build-essential alsa-utils libasound2-dev libssl-dev libjson-c-dev libopus-dev libopusenc-dev libopusfile-dev cmake pkg-config"
-    echo "Ubuntu/Debian (alternative for libopusenc-dev): sudo apt install opus-tools libopus-dev libopusenc-dev libopusfile-dev"
-    echo "Ubuntu/Debian (from source):"
-    echo "  1. sudo apt install build-essential autoconf automake libtool pkg-config libopus-dev"
-    echo "  2. git clone https://github.com/xiph/libopusenc.git"
-    echo "  3. cd libopusenc && ./autogen.sh && ./configure && make && sudo make install"
-    echo "  4. sudo ldconfig"
-    echo "CentOS/RHEL/Fedora: sudo yum install gcc gcc-c++ make alsa-lib-devel openssl-devel json-c-devel opus-devel opus-tools"
-    exit 1
+    
+    # 检查是否是opusenc库未找到，但可能已从源码安装到/usr/local
+    if [[ " ${MISSING_LIBS[*]} " =~ "opusenc" ]]; then
+        echo "检测到opusenc库未找到，但可能已从源码安装到/usr/local目录。"
+        echo "尝试设置PKG_CONFIG_PATH环境变量..."
+        export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH"
+        
+        # 重新检查opusenc库
+        if pkg-config --exists "opusenc"; then
+            echo "✓ opusenc库现在可以被找到"
+            # 从缺失列表中移除opusenc
+            MISSING_LIBS=()
+            for lib in "${REQUIRED_LIBS[@]}"; do
+                if ! pkg-config --exists "$lib"; then
+                    MISSING_LIBS+=("$lib")
+                fi
+            done
+            
+            if [ ${#MISSING_LIBS[@]} -eq 0 ]; then
+                echo "所有依赖库现在都已找到！"
+            else
+                echo "仍有其他库未找到: ${MISSING_LIBS[*]}"
+            fi
+        else
+            echo "✗ 仍然无法找到opusenc库，即使设置了PKG_CONFIG_PATH"
+        fi
+    fi
+    
+    if [ ${#MISSING_LIBS[@]} -ne 0 ]; then
+        echo "请安装缺失的依赖包:"
+        echo "Ubuntu/Debian: sudo apt update && sudo apt install build-essential alsa-utils libasound2-dev libssl-dev libjson-c-dev libopus-dev libopusenc-dev libopusfile-dev cmake pkg-config"
+        echo "Ubuntu/Debian (alternative for libopusenc-dev): sudo apt install opus-tools libopus-dev libopusenc-dev libopusfile-dev"
+        echo "Ubuntu/Debian (from source):"
+        echo "  1. sudo apt install build-essential autoconf automake libtool pkg-config libopus-dev"
+        echo "  2. git clone https://github.com/xiph/libopusenc.git"
+        echo "  3. cd libopusenc && ./autogen.sh && ./configure && make && sudo make install"
+        echo "  4. sudo ldconfig"
+        echo "  5. export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:\$PKG_CONFIG_PATH"
+        echo "CentOS/RHEL/Fedora: sudo yum install gcc gcc-c++ make alsa-lib-devel openssl-devel json-c-devel opus-devel opus-tools"
+        exit 1
+    fi
 fi
 
 echo "所有依赖检查通过"

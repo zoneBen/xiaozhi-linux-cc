@@ -71,6 +71,89 @@
    export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH"
    ```
 
+4. **验证库文件是否正确安装**:
+   ```bash
+   # 检查库文件是否存在
+   ls -la /usr/local/lib/libopusenc*
+   ls -la /usr/local/include/opusenc*
+   
+   # 检查pkg-config文件
+   ls -la /usr/local/lib/pkgconfig/opusenc.pc
+   
+   # 验证pkg-config能否找到库
+   PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" pkg-config --exists opusenc && echo "opusenc found" || echo "opusenc not found"
+   pkg-config --modversion opusenc
+   
+   # 如果库存在但pkg-config找不到，临时设置环境变量
+   export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH"
+   ```
+
+5. **修复脚本换行符问题（如果遇到`#!/bin/bash: No such file or directory`错误）**:
+   ```bash
+   # 修复Windows创建的脚本在Linux上的换行符问题
+   sed -i 's/\r$//' scripts/*.sh
+   
+   # 或者使用dos2unix（如果已安装）
+   dos2unix scripts/*.sh
+   ```
+
+6. **修复pkg-config文件缺失问题（当库文件存在但pkg-config找不到时）**:
+   ```bash
+   # 首先检查是否有.pc文件
+   find /usr/local -name "opusenc.pc" 2>/dev/null
+   
+   # 如果没有找到.pc文件，手动创建它
+   sudo mkdir -p /usr/local/lib/pkgconfig
+   sudo tee /usr/local/lib/pkgconfig/opusenc.pc > /dev/null <<EOF
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: opusenc
+Description: Opus Audio Encoder Library
+Version: 0.2.1
+Libs: -L${libdir} -lopusenc
+Cflags: -I${includedir}/opus
+Requires: opus
+EOF
+   
+   # 验证pkg-config现在是否能找到库
+   export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+   pkg-config --exists opusenc && echo "Found" || echo "Not found"
+   ```
+
+7. **修复头文件缺失问题（如 opus.h: No such file or directory）**:
+   ```bash
+   # 问题：opusenc.h 依赖于 opus.h，但编译器找不到 opus.h
+   # 这通常是因为 libopus-dev 没有安装，或者安装路径不在编译器搜索路径中
+   
+   # 检查头文件位置
+   find /usr -name "opus.h" 2>/dev/null
+   find /usr -name "opusenc.h" 2>/dev/null
+   
+   # 如果 opus.h 在 /usr/include/opus/opus.h
+   # 而 opusenc.h 在 /usr/local/include/opus/opusenc.h
+   # 则需要确保编译器能找到两个路径
+   
+   # 解决方案1：安装 opus 开发包
+   sudo apt install libopus-dev
+   
+   # 解决方案2：如果从源码安装，确保安装了头文件并更新路径
+   # 从源码安装 opus 库：
+   git clone https://github.com/xiph/opus.git
+   cd opus
+   ./autogen.sh
+   ./configure
+   make
+   sudo make install
+   sudo ldconfig  # 重要：更新库缓存
+   
+   # 验证头文件是否存在
+   find /usr -name "opus.h" 2>/dev/null
+   find /usr -name "opusenc.h" 2>/dev/null
+   ```
+
 ### 2. 音频权限问题
 
 #### 问题：无法访问音频设备

@@ -29,6 +29,42 @@ include_directories(
     src
 )
 
+# 查找并包含Opus库头文件目录
+# 检查标准路径和其他可能的路径
+find_path(OPUS_INCLUDE_DIR opus/opus.h
+    PATHS /usr/include /usr/local/include /opt/local/include /sw/include
+    NO_DEFAULT_PATH)
+if(NOT OPUS_INCLUDE_DIR)
+    find_path(OPUS_INCLUDE_DIR opus/opus.h)
+endif()
+if(OPUS_INCLUDE_DIR)
+    include_directories(${OPUS_INCLUDE_DIR})
+endif()
+
+find_path(OPUSENC_INCLUDE_DIR opus/opusenc.h
+    PATHS /usr/include /usr/local/include /opt/local/include /sw/include
+    NO_DEFAULT_PATH)
+if(NOT OPUSENC_INCLUDE_DIR)
+    find_path(OPUSENC_INCLUDE_DIR opus/opusenc.h)
+endif()
+if(OPUSENC_INCLUDE_DIR)
+    include_directories(${OPUSENC_INCLUDE_DIR})
+endif()
+
+find_path(OPUSFILE_INCLUDE_DIR opus/opusfile.h
+    PATHS /usr/include /usr/local/include /opt/local/include /sw/include
+    NO_DEFAULT_PATH)
+if(NOT OPUSFILE_INCLUDE_DIR)
+    find_path(OPUSFILE_INCLUDE_DIR opus/opusfile.h)
+endif()
+if(OPUSFILE_INCLUDE_DIR)
+    include_directories(${OPUSFILE_INCLUDE_DIR})
+endif()
+
+# 确保包含/usr/local/include和/usr/include以支持从源码安装的库
+# 使用更具体的路径来解决opus头文件问题
+include_directories(/usr/local/include /usr/include /usr/local/include/opus /usr/include/opus)
+
 # 定义源文件
 set(AUDIO_SOURCES
     src/audio/audio_manager.cpp
@@ -84,6 +120,7 @@ target_link_libraries(xiaozhi-daemon
     ${OPUSFILE_LIBRARIES}
     Threads::Threads
     -ldl
+    -lm  # 数学库
 )
 
 # 安装规则

@@ -4,7 +4,15 @@
 #include <mutex>
 #include <atomic>
 #include <functional>
+#include <memory>
 #include "xiaozhi_types.h"
+
+// 前向声明
+namespace xiaozhi {
+class AlsaHandler;
+class OpusEncoder;
+class OpusDecoder;
+}
 
 namespace xiaozhi {
 
@@ -39,6 +47,11 @@ private:
     std::thread record_thread_;
     std::thread play_thread_;
     std::mutex mutex_;
+
+    // 音频处理器
+    std::unique_ptr<AlsaHandler> alsa_handler_;
+    std::unique_ptr<OpusEncoder> opus_encoder_;
+    std::unique_ptr<OpusDecoder> opus_decoder_;
 
     // 内部音频处理函数
     void recordLoop();

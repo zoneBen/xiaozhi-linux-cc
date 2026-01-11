@@ -169,7 +169,48 @@ sudo usermod -a -G audio $USER
 
 ## 使用方法
 
-### 1. 启动服务
+### 1. 环境设置（如果从源码安装了库）
+如果从源码安装了libopusenc等库，可能需要设置环境变量：
+```bash
+# 设置PKG_CONFIG_PATH以确保构建脚本能找到库
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+
+# 或者运行环境设置脚本
+./scripts/setup_env.sh
+```
+
+### 2. 修复脚本换行符问题（如果遇到`#!/bin/bash: No such file or directory`错误）
+```bash
+# 修复Windows创建的脚本在Linux上的换行符问题
+sed -i 's/\r$//' scripts/*.sh
+```
+
+### 2.1 修复pkg-config文件缺失问题（当库文件存在但pkg-config找不到时）
+```bash
+# 检查是否有.pc文件
+find /usr/local -name "opusenc.pc" 2>/dev/null
+
+# 如果没有找到.pc文件，手动创建它
+sudo mkdir -p /usr/local/lib/pkgconfig
+sudo tee /usr/local/lib/pkgconfig/opusenc.pc > /dev/null <<EOF
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: opusenc
+Description: Opus Audio Encoder Library
+Version: 0.2.1
+Libs: -L${libdir} -lopusenc
+Cflags: -I${includedir}/opus
+Requires: opus
+EOF
+
+# 设置环境变量
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+```
+
+### 3. 启动服务
 ```bash
 # 前台运行
 ./xiaozhi-daemon --config ~/.config/xiaozhi/config.json

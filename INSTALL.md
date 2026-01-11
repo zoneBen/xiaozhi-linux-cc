@@ -41,6 +41,35 @@ cd libopusenc
 make
 sudo make install
 sudo ldconfig  # 更新库缓存
+
+# 如果构建时仍然提示找不到opusenc库，请设置PKG_CONFIG_PATH：
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+# 或者添加到~/.bashrc中以永久生效：
+echo 'export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH' >> ~/.bashrc
+source ~/.bashrc
+
+# 如果仍然找不到库，请检查是否有.pc文件：
+find /usr/local -name "opusenc.pc" 2>/dev/null
+
+# 注意：如果从源码编译安装，需要确保同时安装了 opus 和 opusenc 的头文件
+# opusenc.h 依赖于 opus.h，两者都需要在编译时可访问
+# 确保执行了：sudo ldconfig 更新库缓存
+
+# 如果没有.pc文件，手动创建它：
+sudo mkdir -p /usr/local/lib/pkgconfig
+sudo tee /usr/local/lib/pkgconfig/opusenc.pc > /dev/null <<EOF
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: opusenc
+Description: Opus Audio Encoder Library
+Version: 0.2.1
+Libs: -L${libdir} -lopusenc
+Cflags: -I${includedir}/opus
+Requires: opus
+EOF
 ```
 
 ### CentOS/RHEL/Fedora
